@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+
+#
+# player 1 is b and wants the board value large
+# player 2 is r and wants the board value small
+#
+
+from winners import winlist
+import random
+import sys
+
+WIDTH = 7
+BSIZE = 42
+
+def boardeval(board,m, who):
+  val=0
+  board[m]=who
+  fd = open('save.hash','a')
+  boardstr=''
+  
+  for i in board:
+    boardstr+=str(i)
+      
+  for i in winlist:
+    b=0
+    r=0
+    for j in range(0,4):
+      if board[i[j]]==2:
+        r+=1
+      elif board[i[j]]==1:
+        b+=1     
+    
+    val+=(2**(3*b)-(2**(3*r)))
+    fd.write("{0:s}:{1:d}\n".format(boardstr,val))
+    
+    if b==4: val=5000
+    elif r==4: val=-5000
+    
+  fd.close()
+  return val
+  
+
+
+class Player:
+  
+  rv = [0.5, 1.0, 0.0]
+
+  def __init__(self,whoami):
+
+    self.newgame()
+
+  def newgame(self):
+
+    self.prev = None
+    
+
+  def getmove(self,board,who):
+    
+    #fd = open('save.hash','w')
+    #fd.write("starting new")
+    #fd.close()
+    
+    c=[(35,28,21,14,7,0), (36,29,22,15,8,1), (37,30,23,16,9,2), (38,31,24,17,10,3), (39,32,25,18,11,4), (40,33,26,19,12,5), (41,34,27,20,13,6)] #columns
+    
+    m=[35,36,37,38,39,40,41]  
+
+    for i in range(0,WIDTH):
+      for j in range(0,6):
+        if(board[c[i][j]]==0):
+          m[i]=c[i][j]
+
+    #m has all possible moves now    
+
+    best=0
+    index=0
+    
+    for i in range(0,7):
+      newboard=board.copy()
+      val=boardeval(newboard,m[i],who)
+      if val>best and who==1:
+        best=val
+        index=i
+      elif val<best and who==2:
+        best=val
+        index=i
+      
+      
+    #print("all boards it considered, and their value are now in save.hash")
+    
+    return index  
+ 
+ 
+  def __str__(self):
+    return 'Nate Devine CS47503'
+
+  def gameover(self,board,who):
+    pass
+
+  def datadump(self):
+    pass
+ 
+if __name__ == "__main__":
+
+  pass
+
